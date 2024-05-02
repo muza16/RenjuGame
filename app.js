@@ -2,6 +2,7 @@ import fs from 'node:fs';
 
 const fieldHeight = 19
 const stonesToWin = 5
+const filePath = './input.txt'
 
 const convertStringToNumberArray = (string) => {
   return string.split('').map(char => parseInt(char))
@@ -9,13 +10,13 @@ const convertStringToNumberArray = (string) => {
 
 const analyzeLine = (line) => {
   return line.findIndex((checkNumber, id) => {
-    return line.slice(id, id + stonesToWin).every(number => number === checkNumber && checkNumber > 0)
+    return checkNumber > 0 && line.slice(id, id + stonesToWin).every(number => number === checkNumber)
   })
 }
 
 const analyzeDiahonalLine = (line) => {
   return line.find((checkItem, id) => {
-    return line.slice(id, id + stonesToWin).every(item => item.player === checkItem.player && checkItem.player > 0)
+    return checkItem.player > 0 && line.slice(id, id + stonesToWin).every(item => item.player === checkItem.player)
   })
 }
 
@@ -31,8 +32,9 @@ const analyzeGameResults = (gameResults) => {
     }
   }
   for(let verticalLineNumber = 0; verticalLineNumber < gameResults.length; verticalLineNumber++) {
-    const line = gameResults.map((line, id) => gameResults[id][verticalLineNumber])
+    const line = gameResults.map((_, id) => gameResults[id][verticalLineNumber])
     const winnerRowId = analyzeLine(line)
+    console.log(winnerRowId)
     if(winnerRowId > -1) {
       return {
         winner: gameResults[winnerRowId][verticalLineNumber],
@@ -99,13 +101,13 @@ const analyzeGameResults = (gameResults) => {
   }
 }
 
-const inputFile = fs.readFileSync('./input.txt')
+const inputFile = fs.readFileSync(filePath)
 const inputText = inputFile.toString()
 const splitedInputText = inputText.split('\r\n')
 const testCasesNumber = parseInt(splitedInputText.splice(0, 1)[0])
 const testCases = []
 let testCaseBuffer = []
-splitedInputText.forEach((line, id) => {
+splitedInputText.forEach((line) => {
   testCaseBuffer.push(convertStringToNumberArray(line))
   if (testCaseBuffer.length === fieldHeight && testCases.length < testCasesNumber) {
     testCases.push(testCaseBuffer)
@@ -124,3 +126,7 @@ ${result.rowId + 1} ${result.columnId + 1}`)
     console.log(0)
   }
 })
+
+
+
+
